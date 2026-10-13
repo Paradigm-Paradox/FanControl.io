@@ -275,16 +275,22 @@
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Flash ready-to-use firmware directly to your ESP32 controller boards.</p>
       </div>
       <div class="blueprint-links">
-        <a class="btn-action" href="/api/esphome/blueprint/esp32_rack_fan_wifi_ble" target="_blank">ESP32 Wi-Fi + BLE YAML</a>
-        <a class="btn-action" href="/api/esphome/blueprint/wt32_eth01_rack_fan_ethernet" target="_blank">WT32-ETH01 Ethernet YAML</a>
+        <a class="btn-action" href="api/esphome/blueprint/esp32_rack_fan_wifi_ble" target="_blank">ESP32 Wi-Fi + BLE YAML</a>
+        <a class="btn-action" href="api/esphome/blueprint/wt32_eth01_rack_fan_ethernet" target="_blank">WT32-ETH01 Ethernet YAML</a>
       </div>
     </div>
   </div>
 
   <script>
+    function getApiUrl(endpoint) {
+      let path = window.location.pathname;
+      if (!path.endsWith('/')) path += '/';
+      return path + endpoint.replace(/^\/+/, '');
+    }
+
     async function setMode(mode) {
       try {
-        const res = await fetch('/api/mode', {
+        const res = await fetch(getApiUrl('api/mode'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mode: mode })
@@ -303,7 +309,7 @@
 
     async function sendFanSpeed(fanId, speed) {
       try {
-        const res = await fetch(`/api/fans/${fanId}/speed`, {
+        const res = await fetch(getApiUrl(`api/fans/${fanId}/speed`), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ speed_pct: parseInt(speed) })
