@@ -1,93 +1,94 @@
-# SolarControl-io
+# FanControl.io 🌀
 
-[![GitHub Release](https://img.shields.io/badge/release-v0.1.0-blue.svg)](https://github.com/Paradigm-Paradox/SolarControl-io)
 [![Home Assistant Add-on](https://img.shields.io/badge/home--assistant-add--on-blue.svg?logo=home-assistant)](https://www.home-assistant.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Supported Architectures](https://img.shields.io/badge/arch-aarch64%20|%20amd64%20|%20armv7-green.svg)
 
-> **Intelligent, edge-native solar energy management, battery storage optimization, dynamic excess diversion, and tariff arbitrage for Home Assistant.**
+> **Intel-spec 25kHz 4-wire PWM cooling fan & thermal orchestration system for Home Assistant with distributed ESP32 edge microcontroller support.**
+
+<p align="center">
+  <img src="icon.png" alt="FanControl.io Icon" width="220" />
+</p>
 
 ---
 
 ## ⚡ Overview
 
-**SolarControl-io** turns your Home Assistant instance into a smart, local energy management system (EMS). It coordinates your solar inverters, home battery storage (BESS), EV chargers, and household loads in real time to maximize self-consumption, protect against peak electric rates, and route excess solar into hot water and vehicle batteries.
+**FanControl.io** turns your Home Assistant instance into a precision thermal management and variable speed cooling hub. It links Home Assistant's environmental sensors and automation engine to distributed **ESP32 edge microcontrollers** (over Wi-Fi, Ethernet, and Bluetooth Low Energy) to provide whisper-quiet, adaptive cooling for server racks, AV enclosures, networking cabinets, battery sheds, and greenhouse grow setups.
 
 ```
-       [ ☀️ Solar PV ]
-              │
-              ▼
-    [ ⚡ Hybrid Inverter ] ◄──────► [ 🔋 Battery (BESS) ]
-        ▲            │
-        │            ▼
- [ 🌐 Grid ]   [ 🏠 Home Load ]
-                     │
-         ┌───────────┴───────────┐
-         ▼                       ▼
-  [ 🚗 EV Charger ]     [ ♨️ Water Heater / HVAC ]
++-----------------------------------------------------------------------------------+
+|                           Home Assistant Core / Supervisor                        |
+|                                                                                   |
+|    +-------------------------------------------------------------------------+    |
+|    |                        FanControl.io Add-on                             |    |
+|    |  - Delta-T Thermal Engine (Exhaust vs Intake differential cooling)      |    |
+|    |  - Curve Optimizer (Silent, Balanced, Performance, Turbo profiles)     |    |
+|    |  - Tachometer RPM Telemetry & Stall Alert Monitor                       |    |
+|    |  - Ingress Web UI (Port 8724) & ESPHome Blueprint Distributor           |    |
+|    +-----------------------------------+-------------------------------------+    |
++----------------------------------------|------------------------------------------+
+                                         | (Native HA API / MQTT / WebSockets)
+           +-----------------------------+-----------------------------+
+           |                                                           |
++----------v-----------------------------+       +---------------------v--------------------+
+|  ESP32 Edge Node: Ethernet / PoE       |       |  ESP32 Edge Node: Wi-Fi + BLE Gateway    |
+|  (e.g., WT32-ETH01 / Olimex POE)       |       |  (e.g., ESP32-WROOM-32 / ESP32-S3)       |
+|                                        |       |                                          |
+|  Hardware Features:                    |       |  Hardware Features:                      |
+|  - 10/100 Mbps RJ45 Wired Ethernet     |       |  - 2.4 GHz 802.11 b/g/n Wi-Fi            |
+|  - Metal rack Faraday immunity         |       |  - Active BLE Tracker (Xiaomi, Inkbird)  |
+|  - 4x 25 kHz Hardware LEDC PWM outputs |       |  - 2-4x Hardware PWM fan outputs         |
+|  - 4x Tachometer pulse counter inputs  |       |  - 1-Wire DS18B20 temp probe bus         |
+|  - Hardware watchdog auto-failsafe     |       |  - Autonomous failsafe watchdog          |
++----------------------------------------+       +------------------------------------------+
 ```
 
 ---
 
 ## 🚀 Key Features
 
-- **⚡ Real-time Power Flow & Balance Engine**: Unifies PV generation, battery charge/discharge, grid import/export, and load telemetry with low-latency closed-loop control.
-- **🔋 Battery Energy Storage Optimization**:
-  - **Self-Consumption Maximization**: Zero out grid draw using stored solar energy.
-  - **Time-of-Use (TOU) Arbitrage**: Intelligent pre-charging on super off-peak tariffs and aggressive peak-shaving.
-  - **Storm & Outage Emergency Reserve**: Automatic battery reserve floor bumping on severe weather warnings.
-- **♨️ Excess Solar Diversion (Zero-Waste Energy)**:
-  - Dynamically routes surplus solar into water heaters, heat pump thermal storage, and EV chargers instead of exporting for pennies.
-  - Anti-hunting hysteresis and minimum cycle timers protect equipment against cloud flicker.
-- **📉 Dynamic Tariff & Negative Pricing Protection**:
-  - Direct integration with Nord Pool, Tibber, Amber Electric, and wholesale dynamic tariffs.
-  - Automatic curtailment or diversion trigger when feed-in rates turn negative.
-  - Utility export limit and zero-export enforcement.
-- **🖥️ Native Home Assistant Ingress UI**:
-  - Sleek, responsive web dashboard with live animated power flow diagrams.
-  - Mode switches (`Auto Optimizer`, `Self Consumption`, `TOU Arbitrage`, `Backup Reserve`, `Manual`).
-  - Diversion priority ordering and instant manual overrides.
+- **🌐 Precision 25 kHz Intel PWM Drivers**:
+  - Leverages the ESP32's hardware LEDC peripheral to generate true 25 kHz active-high PWM signals conforming to the Intel 4-Wire PWM fan specification.
+  - Eliminates acoustic motor whine and coil clicking at lower duty cycles.
+- **📊 Tachometer RPM Monitoring & Stall Detection**:
+  - Hardware pulse-counter inputs track RPM in real time.
+  - Immediate alert notifications if a fan seizes, stalls, or encounters cable obstructions.
+- **🌡️ Delta-T Differential Cooling**:
+  - Dynamically regulates fan speeds based on temperature differentials ($\Delta T = T_{exhaust} - T_{intake}$) to eliminate heat pockets without unnecessary noise.
+- **🛡️ Edge-Level Autonomous Fail-Safes**:
+  - ESP32 firmware includes auto-failsafe watchdogs (`delayed_off` / safety floor); if Home Assistant or the network disconnects, fans automatically ramp to 100% safety speed to protect delicate hardware.
+- **🖥️ Native Home Assistant Ingress UI (Port 8724)**:
+  - Responsive web dashboard embedded directly in the Home Assistant sidebar for curve tuning, RPM monitoring, and manual overrides.
 
 ---
 
 ## 📦 Installation in Home Assistant
 
-1. In your Home Assistant instance, navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
+1. In Home Assistant, navigate to **Settings** -> **Add-ons** -> **Add-on Store**.
 2. Click the three dots (top right) -> **Repositories**.
 3. Add this repository URL:
    ```text
-   https://github.com/Paradigm-Paradox/SolarControl-io
+   https://github.com/Paradigm-Paradox/FanControl.io
    ```
-4. Find **SolarControl-io** in the add-on store list and click **Install**.
-5. Configure your inverter, battery, and meter entities in the **Configuration** tab.
-6. Click **Start** and select **Show in sidebar** to access the Ingress dashboard.
+4. Find **FanControl-io** and click **Install**.
+5. Configure your fan channels and sensors, start the add-on, and open the Web UI!
 
 ---
 
 ## 📁 Repository Structure
 
 ```text
-├── solar_control/               # Complete Home Assistant Add-on
-│   ├── app/                     # Python FastAPI server & energy engine
-│   │   ├── engine/              # Power flow, battery manager, load diverter
-│   │   ├── config.py            # Options loader & pydantic models
-│   │   ├── ha_client.py         # Home Assistant Supervisor API client
-│   │   └── main.py              # Ingress web application
-│   ├── config.yaml              # Add-on configuration & options schema
-│   ├── build.yaml               # Multi-arch container base images
-│   ├── Dockerfile               # Production container definition
-│   ├── run.sh                   # Startup script
-│   ├── DOCS.md                  # Detailed user guide
-│   └── CHANGELOG.md             # Version history
-├── docs/
-│   └── DESIGN.md                # System design & architecture specification
-├── DESIGN.md                    # Architecture summary
-├── repository.yaml              # HA Add-on Repository manifest
+├── fan_control/
+│   ├── config.yaml              # Home Assistant add-on configuration & options schema (Port 8724)
+│   ├── Dockerfile               # Multi-arch container definition
+│   ├── build.yaml               # Multi-architecture builds (aarch64, amd64, armv7)
+│   ├── DOCS.md                  # Comprehensive user and installation documentation
+│   ├── CHANGELOG.md             # Version history
+│   ├── DESIGN.md                # System architecture & hardware specs
+│   ├── templates/esphome/       # Ready-to-flash ESPHome YAML templates (Wi-Fi & Ethernet)
+│   └── rootfs/app/              # FastAPI backend & Ingress dashboard
+├── icon.png                     # Official vintage PCB fan icon
+├── repository.yaml              # Add-on repository catalog manifest
 └── README.md
 ```
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
