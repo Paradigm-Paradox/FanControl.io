@@ -1,0 +1,60 @@
+substitutions:
+  name: "sprinkler-node-ethernet"
+  friendly_name: "Sprinkler Controller Ethernet (WT32-ETH01)"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Wired Ethernet Configuration (LAN8720 PHY)
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO0_IN
+  phy_addr: 1
+  power_pin: GPIO16
+
+# Enable Home Assistant API & OTA
+api:
+  encryption:
+    key: "!secret api_encryption_key"
+
+ota:
+  - platform: esphome
+
+logger:
+
+# Relays with built-in hardware auto-off watchdog
+switch:
+  - platform: gpio
+    pin: GPIO2
+    name: "Zone 1 Front Lawn"
+    id: zone_1
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - delay: 30min
+      - switch.turn_off: zone_1
+
+  - platform: gpio
+    pin: GPIO4
+    name: "Zone 2 Back Lawn"
+    id: zone_2
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - delay: 30min
+      - switch.turn_off: zone_2
+
+  - platform: gpio
+    pin: GPIO12
+    name: "Master Solenoid Valve"
+    id: master_valve
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - delay: 60min
+      - switch.turn_off: master_valve
