@@ -1,0 +1,24 @@
+# Environments & Dependencies
+__pycache__/
+*.py[cod]
+*$py.class
+node_modules/
+.env
+.venv
+env/
+venv/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build & runtime artifacts
+dist/
+build/
+*.log
